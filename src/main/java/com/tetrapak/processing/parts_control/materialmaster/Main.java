@@ -14,10 +14,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author SEPALMM
  */
-public class Main {
+public class Main implements Runnable {
 
     private static Map<String, Data> map;
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static Map<String, Data> gplMap;
+    private static Map<String, Data> mtrlMap;
 
     private static Map<String, Data> mergeMaps(
             Map<String, Data> mtrlMap, Map<String, Data> gplMap) {
@@ -33,7 +35,7 @@ public class Main {
 
     private static void updateMissingNumbers(Map<String, Data> gplMap) {
         //        Update missing material numbers in gplMap
-        gplMap.values().stream().filter(v -> v.getMaterialNumberNUM().equals(""))
+        gplMap.values().parallelStream().filter(v -> v.getMaterialNumberNUM().equals(""))
                 .forEach((c) -> {
                     String bw = c.getMaterialNumberBW();
                     c.setMaterialNumberNUM(Utility.convertFromBWtoNUMformat(bw));
@@ -41,16 +43,23 @@ public class Main {
                 });
     }
 
+    public void run() {
+        mtrlMap = FileReader.readMaterialFile();
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         map = new HashMap<>();
-        Map<String, Data> mtrlMap = FileReader.readMaterialFile();
-        Map<String, Data> gplMap = FileReader.readGPLfile();
+
+        (new Thread(new Main())).start();
+
+        gplMap = FileReader.readGPLfile();
 
         // Merge into one map
         map = mergeMaps(mtrlMap, gplMap);
+
         LOGGER.info("Size of gplMap after merge is {}.", gplMap.size());
 
         // Export gplMap values as Excel file
