@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Main implements Runnable {
 
-    private static Map<String, Data> map;
+    private static Map<String, Data> globalMap;
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static Map<String, Data> gplMap;
     private static Map<String, Data> mtrlMap;
@@ -51,18 +51,21 @@ public class Main implements Runnable {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        map = new HashMap<>();
+        globalMap = new HashMap<>();
+
+        LOGGER.info("Start read from excel files");
 
         (new Thread(new Main())).start();
 
         gplMap = FileReader.readGPLfile();
 
         // Merge into one map
-        map = mergeMaps(mtrlMap, gplMap);
+        globalMap = mergeMaps(mtrlMap, gplMap);
 
         LOGGER.info("Size of gplMap after merge is {}.", gplMap.size());
 
-        // Export gplMap values as Excel file
+        // Export gplMap values as Excel file 
+        ExcelWriter.writeExcel(globalMap);
     }
 
 }
