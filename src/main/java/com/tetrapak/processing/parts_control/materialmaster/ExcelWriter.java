@@ -39,7 +39,7 @@ public class ExcelWriter {
         LOGGER.info("Creating excel");
 
 //        Write header
-        String[] header = {"materialNumberNUM", "materialNumberBW", "materialNumberTP", "description", "mpg", "assortmentGroup", "pg", "refName"};
+        String[] header = {"materialNumberNUM", "materialNumberBW", "materialNumberTP", "description", "mpg", "assortmentGroup", "pg", "familyName"};
 
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < header.length; i++) {
@@ -79,7 +79,7 @@ public class ExcelWriter {
                         cell.setCellValue(d.getPg());
                         break;
                     case 7:
-                        cell.setCellValue(d.getRefName());
+                        cell.setCellValue(d.getFamilyName());
                         break;
                     default:
                         break;

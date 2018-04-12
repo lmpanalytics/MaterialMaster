@@ -35,4 +35,6 @@
         </dependency>
     </dependencies>
     <name>MaterialMaster</name>
+    <description>Merge the three data sources of GPL, BO material 
+        orders, and Part families from NPP into one Excel file.</description>
 </project>

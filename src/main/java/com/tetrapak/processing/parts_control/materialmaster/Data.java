@@ -14,13 +14,13 @@ package com.tetrapak.processing.parts_control.materialmaster;
 public class Data {
 
     private String materialNumberNUM;
-    private String materialNumberBW;
+    private final String materialNumberBW;
     private String materialNumberTP;
-    private String description;
-    private String mpg;
-    private String assortmentGroup;
-    private double pg;
-    private String refName;
+    private final String description;
+    private final String mpg;
+    private final String assortmentGroup;
+    private final double pg;
+    private String familyName;
 
     /**
      * Constructor
@@ -42,7 +42,7 @@ public class Data {
         this.mpg = mpg;
         this.assortmentGroup = assortmentGroup;
         this.pg = pg;
-        this.refName = refName;
+        this.familyName = refName;
     }
 
     public String getMaterialNumberNUM() {
@@ -57,10 +57,6 @@ public class Data {
         return materialNumberBW;
     }
 
-    public void setMaterialNumberBW(String materialNumberBW) {
-        this.materialNumberBW = materialNumberBW;
-    }
-
     public String getMaterialNumberTP() {
         return materialNumberTP;
     }
@@ -73,40 +69,24 @@ public class Data {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getMpg() {
         return mpg;
-    }
-
-    public void setMpg(String mpg) {
-        this.mpg = mpg;
     }
 
     public String getAssortmentGroup() {
         return assortmentGroup;
     }
 
-    public void setAssortmentGroup(String assortmentGroup) {
-        this.assortmentGroup = assortmentGroup;
-    }
-
     public double getPg() {
         return pg;
     }
 
-    public void setPg(double pg) {
-        this.pg = pg;
+    public String getFamilyName() {
+        return familyName;
     }
 
-    public String getRefName() {
-        return refName;
-    }
-
-    public void setRefName(String refName) {
-        this.refName = refName;
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
 }

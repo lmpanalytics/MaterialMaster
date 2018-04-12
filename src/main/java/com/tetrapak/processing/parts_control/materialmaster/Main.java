@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Merge the three data sources of GPL, BO material orders, and Part families
+ * from NPP into one excel file.
  *
  * @author SEPALMM
  */
@@ -20,15 +22,18 @@ public class Main implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static Map<String, Data> gplMap;
     private static Map<String, Data> mtrlMap;
+    private static Map<String, String> nppMap;
 
     private static Map<String, Data> mergeMaps(
             Map<String, Data> mtrlMap, Map<String, Data> gplMap) {
 
 //        Merge the maps
         mtrlMap.forEach((k, v) -> gplMap.putIfAbsent(k, v));
+//        gplMap now has data from mtrlMap
 
-//        Update missing material numbers in gplMap
+//        Update missing material numbers and family names in gplMap
         updateMissingNumbers(gplMap);
+        updateFamilyNames(gplMap);
 
         return gplMap;
     }
@@ -43,6 +48,17 @@ public class Main implements Runnable {
                 });
     }
 
+    private static void updateFamilyNames(Map<String, Data> map) {
+        //        Update family names in map
+        map.values().parallelStream().filter(v -> v.getFamilyName().equals("")||v.getFamilyName().equals("dummy"))
+                .forEach((c) -> {
+                    String fam = c.getFamilyName();
+                    String bw = c.getMaterialNumberBW();
+                    c.setFamilyName(nppMap.get(bw));
+                });
+    }
+
+    @Override
     public void run() {
         mtrlMap = FileReader.readMaterialFile();
     }
@@ -58,6 +74,7 @@ public class Main implements Runnable {
         (new Thread(new Main())).start();
 
         gplMap = FileReader.readGPLfile();
+        nppMap = FileReader.readNPPfile();
 
         // Merge into one map
         globalMap = mergeMaps(mtrlMap, gplMap);

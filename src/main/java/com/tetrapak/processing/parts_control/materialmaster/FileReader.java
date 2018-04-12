@@ -34,6 +34,7 @@ public class FileReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileReader.class);
     private static final String FILE_NAME_MATERIAL = "materials_raw.xlsx";
     private static final String FILE_NAME_GPL = "Pc_GPL_raw.xlsx";
+    private static final String FILE_NAME_NPP = "Pc_NPP_famlilies_raw.xlsx";
 
     /**
      * Reads a material file and puts data into a map.
@@ -175,6 +176,63 @@ public class FileReader {
                 }
             }
             LOGGER.info("Read {} GPL instances to map.", m.size());
+        } catch (FileNotFoundException e) {
+            LOGGER.error("Exception file not found {}", e.getMessage());
+        } catch (IOException e) {
+            LOGGER.error("Exception in IO {}", e.getMessage());
+        }
+        return m;
+    }
+
+    /**
+     * Reads a NPP file and puts data into a map.
+     *
+     * @return map
+     */
+    public static Map<String, String> readNPPfile() {
+        Map<String, String> m = new HashMap<>();
+        int rowCounter = 0;
+        try {
+            FileInputStream excelFile = new FileInputStream(new File(FILE_NAME_NPP));
+            Workbook workbook = new XSSFWorkbook(excelFile);
+            Sheet datatypeSheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = datatypeSheet.iterator();
+
+            while (rowIterator.hasNext()) {
+
+                rowCounter++;
+
+//                Initiate at each new row
+                Row currentRow = rowIterator.next();
+                Iterator<Cell> cellIterator = currentRow.iterator();
+                int cellCounter = 0;
+
+                String materialNumberBW = "";
+                String familyName = "";
+
+                while (cellIterator.hasNext()) {
+
+                    cellCounter++;
+
+                    Cell currentCell = cellIterator.next();
+
+                    if (currentCell.getCellTypeEnum() == CellType.STRING) {
+                        String s = currentCell.getStringCellValue();
+//                        System.out.print(s + " I'm a String ");
+                        if (cellCounter == 4) {
+                            materialNumberBW = s;
+                        } else if (cellCounter == 7) {
+                            familyName = s;
+                        }
+                    }
+
+                }
+                //   Put to map starting from row two in the Excel sheet
+                if (rowCounter != Integer.MAX_VALUE && rowCounter > 1) {
+                    m.put(materialNumberBW, familyName);
+                }
+            }
+            LOGGER.info("Read {} NPP instances to map.", m.size());
         } catch (FileNotFoundException e) {
             LOGGER.error("Exception file not found {}", e.getMessage());
         } catch (IOException e) {
